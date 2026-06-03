@@ -1,2 +1,5 @@
 helix-importer-ui
 *.min.js
+scripts/checks/
+scripts/report/
+scripts/lib/
