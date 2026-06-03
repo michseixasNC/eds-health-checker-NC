@@ -11,9 +11,11 @@
 export async function run(url) {
   const parsed = new URL(url);
 
-  // aem.page is a preview host — always a fail for production audits
+  // aem.page is a preview host — fail in production, warn when the checker itself runs on aem.page
   if (parsed.hostname.endsWith('aem.page')) {
-    return result('fail', ['URL points to aem.page (preview), not aem.live (production).']);
+    const appOnPreview = window.location.hostname.endsWith('aem.page');
+    const severity = appOnPreview ? 'warn' : 'fail';
+    return result(severity, ['URL points to aem.page (preview), not aem.live (production).']);
   }
 
   let data;
