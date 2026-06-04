@@ -106,6 +106,15 @@ main > .section > div {
   font-weight: 700;
   white-space: nowrap;
   letter-spacing: -0.01em;
+  line-height: 1;
+  margin: 0;
+  padding: 0;
+}
+
+#app-header h1 .app-logo {
+  height: 44px;
+  width: auto;
+  display: block;
 }
 
 #check-form {

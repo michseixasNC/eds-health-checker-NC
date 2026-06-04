@@ -86,7 +86,11 @@ function buildAppHeader() {
   header.id = 'app-header';
 
   const heading = document.createElement('h1');
-  heading.textContent = 'EDS Site Health Checker';
+  const logo = document.createElement('img');
+  logo.src = '/icons/logo.svg';
+  logo.alt = 'EDS Health Checker by Cognizant Netcentric';
+  logo.className = 'app-logo';
+  heading.appendChild(logo);
   header.appendChild(heading);
 
   const form = document.createElement('form');
