@@ -87,9 +87,15 @@ function buildAppHeader() {
 
   const heading = document.createElement('h1');
   const logo = document.createElement('img');
-  logo.src = '/icons/logo.svg';
+  const isDark = () => document.documentElement.dataset.theme === 'dark';
+  logo.src = isDark() ? '/icons/logo-dark.svg' : '/icons/logo.svg';
   logo.alt = 'EDS Health Checker by Cognizant Netcentric';
   logo.className = 'app-logo';
+
+  new MutationObserver(() => {
+    logo.src = isDark() ? '/icons/logo-dark.svg' : '/icons/logo.svg';
+  }).observe(document.documentElement, { attributeFilter: ['data-theme'] });
+
   heading.appendChild(logo);
   header.appendChild(heading);
 

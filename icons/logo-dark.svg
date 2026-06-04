@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" fill="none" role="img" aria-label="EDS Health Checker by Cognizant Netcentric">
+  <rect x="0" y="10" width="40" height="40" rx="4" fill="#FA0F00"/>
+  <polyline points="6,30 12,30 15,20 19,40 23,25 27,35 30,30 34,30" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <text x="50" y="21" font-family="'Adobe Clean','Helvetica Neue',Arial,sans-serif" font-size="15" font-weight="700" fill="#FA0F00" letter-spacing="0.5">EDS</text>
+  <text x="50" y="38" font-family="'Adobe Clean','Helvetica Neue',Arial,sans-serif" font-size="13" font-weight="400" fill="#e8e8e8" letter-spacing="0.2">Health Checker</text>
+  <text x="50" y="53" font-family="'Adobe Clean','Helvetica Neue',Arial,sans-serif" font-size="9.5" font-weight="400" fill="#6b9fff" letter-spacing="0.1">by Cognizant Netcentric</text>
+</svg>
