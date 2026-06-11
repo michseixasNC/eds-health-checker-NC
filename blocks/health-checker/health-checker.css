@@ -861,7 +861,173 @@ button {
 }
 
 /* ==========================================================================
-   15. Print / PDF
+   15. Crawl mode
+   ========================================================================== */
+
+#crawl-btn {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+}
+
+#crawl-btn:hover:not(:disabled) {
+  background: var(--color-bg);
+}
+
+#crawl-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.crawl-loading {
+  text-align: center;
+  padding: var(--space-xl) var(--space-lg);
+}
+
+.crawl-loading__msg {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+}
+
+.crawl-summary__pill {
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+}
+
+.crawl-table-wrapper {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  margin-top: var(--space-lg);
+}
+
+.crawl-table__heading {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-secondary);
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--color-border);
+  margin: 0;
+}
+
+.crawl-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.crawl-table thead th {
+  padding: var(--space-sm) var(--space-md);
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.crawl-table tbody tr {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.crawl-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.crawl-table td {
+  padding: var(--space-sm) var(--space-md);
+  vertical-align: middle;
+}
+
+.crawl-table__row--fail {
+  border-left: 3px solid var(--color-fail);
+}
+
+.crawl-table__row--warn {
+  border-left: 3px solid var(--color-warn);
+}
+
+.crawl-table__row--pass {
+  border-left: 3px solid var(--color-pass);
+}
+
+.crawl-table__check-name {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.crawl-table__count--pass {
+  color: var(--color-pass);
+  font-weight: 600;
+  text-align: center;
+}
+
+.crawl-table__count--warn {
+  color: var(--color-warn);
+  font-weight: 600;
+  text-align: center;
+}
+
+.crawl-table__count--fail {
+  color: var(--color-fail);
+  font-weight: 600;
+  text-align: center;
+}
+
+.crawl-table__badge {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+
+.crawl-table__pages {
+  max-width: 380px;
+}
+
+.crawl-table__page-chip {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 1px var(--space-xs);
+  margin: 2px;
+  color: var(--color-text-secondary);
+}
+
+.crawl-table__page-chip--fail {
+  border-color: var(--color-fail);
+  color: var(--color-fail);
+}
+
+.crawl-table__page-chip--warn {
+  border-color: var(--color-warn);
+  color: var(--color-warn);
+}
+
+.crawl-table__page-more {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
+  margin-left: var(--space-xs);
+}
+
+/* ==========================================================================
+   16. Print / PDF
    ========================================================================== */
 
 .print-header {

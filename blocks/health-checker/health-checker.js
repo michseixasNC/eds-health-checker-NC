@@ -17,6 +17,7 @@ import { run as runSitemap } from '../../scripts/checks/sitemap.js';
 import { run as runStructuredData } from '../../scripts/checks/structured-data.js';
 import { run as runViewport } from '../../scripts/checks/viewport.js';
 import { run as runWebMcp } from '../../scripts/checks/webmcp.js';
+import { getSitemapUrls } from '../../scripts/lib/crawl.js';
 import { getHistory, saveRun } from '../../scripts/lib/history.js';
 import {
   renderCard,
@@ -27,6 +28,12 @@ import {
   setContainer,
   updateProgress,
 } from '../../scripts/report/dashboard.js';
+import {
+  renderCrawlLoading,
+  renderCrawlReport,
+  setCrawlContainer,
+  updateCrawlProgress,
+} from '../../scripts/report/crawl-report.js';
 
 const CHECKS = [
   { id: 'performance', label: 'Performance', run: runPerformance },
@@ -130,6 +137,12 @@ function buildAppHeader() {
   submitBtn.textContent = 'Run Checks';
   form.appendChild(submitBtn);
 
+  const crawlBtn = document.createElement('button');
+  crawlBtn.id = 'crawl-btn';
+  crawlBtn.type = 'button';
+  crawlBtn.textContent = 'Crawl Sitemap';
+  form.appendChild(crawlBtn);
+
   header.appendChild(form);
 
   const themeBtn = document.createElement('button');
@@ -139,6 +152,20 @@ function buildAppHeader() {
   header.appendChild(themeBtn);
 
   return header;
+}
+
+function runAllChecks(url, apiKey) {
+  return Promise.all(
+    CHECKS.map(({ id, label, run }) => {
+      const p = id === 'performance' ? run(url, apiKey) : run(url);
+      return p.catch((reason) => ({
+        id,
+        label,
+        status: 'fail',
+        findings: [`Unexpected error: ${reason?.message ?? String(reason)}`],
+      }));
+    }),
+  );
 }
 
 export default function decorate(block) {
@@ -151,11 +178,13 @@ export default function decorate(block) {
   dashboard.id = 'dashboard';
   block.appendChild(dashboard);
   setContainer(dashboard);
+  setCrawlContainer(dashboard);
 
   const form = block.querySelector('#check-form');
   const input = block.querySelector('#url-input');
   const apiKeyInput = block.querySelector('#api-key-input');
   const submitBtn = block.querySelector('#submit-btn');
+  const crawlBtnEl = block.querySelector('#crawl-btn');
   const themeBtn = block.querySelector('#theme-btn');
   const urlHistoryDatalist = block.querySelector('#url-history');
 
@@ -174,6 +203,59 @@ export default function decorate(block) {
 
   apiKeyInput.value = localStorage.getItem(LS_KEY) ?? '';
   buildHistoryOptions(urlHistoryDatalist);
+
+  crawlBtnEl.addEventListener('click', async () => {
+    let siteUrl;
+    try {
+      siteUrl = normalizeUrl(input.value.trim());
+    } catch {
+      renderError('Please enter a valid site URL to crawl.');
+      return;
+    }
+
+    const apiKey = apiKeyInput.value.trim();
+    if (apiKey) localStorage.setItem(LS_KEY, apiKey);
+    else localStorage.removeItem(LS_KEY);
+
+    submitBtn.disabled = true;
+    crawlBtnEl.disabled = true;
+    crawlBtnEl.textContent = 'Fetching sitemap…';
+    renderCrawlLoading(0);
+
+    let urls;
+    try {
+      urls = await getSitemapUrls(siteUrl);
+    } catch (err) {
+      renderError(`Sitemap crawl failed: ${err.message}`);
+      submitBtn.disabled = false;
+      crawlBtnEl.disabled = false;
+      crawlBtnEl.textContent = 'Crawl Sitemap';
+      return;
+    }
+
+    renderCrawlLoading(urls.length);
+    crawlBtnEl.textContent = 'Crawling…';
+
+    const crawlResults = [];
+    const BATCH_SIZE = 3;
+    for (let i = 0; i < urls.length; i += BATCH_SIZE) {
+      const batch = urls.slice(i, i + BATCH_SIZE);
+      // eslint-disable-next-line no-await-in-loop
+      const batchResults = await Promise.all(
+        batch.map(async (pageUrl) => {
+          const results = await runAllChecks(pageUrl, apiKey);
+          return { url: pageUrl, results };
+        }),
+      );
+      crawlResults.push(...batchResults);
+      updateCrawlProgress(crawlResults.length, urls.length);
+    }
+
+    renderCrawlReport(siteUrl, crawlResults, CHECKS);
+    submitBtn.disabled = false;
+    crawlBtnEl.disabled = false;
+    crawlBtnEl.textContent = 'Crawl Sitemap';
+  });
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
