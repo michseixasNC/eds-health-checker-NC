@@ -4,15 +4,17 @@ see @AGENTS.md
 
 ## What This Is
 
-EDS Health Checker by Cognizant Netcentric — a single-page AEM EDS tool that audits any AEM EDS site URL and reports a dashboard of health checks. It runs fully client-side except for a Cloudflare Worker proxy used for redirect checking.
+EDS Health Checker by Cognizant Netcentric — a single-page AEM EDS tool that audits any AEM EDS site URL and reports a dashboard of health checks. It runs fully client-side except for a Cloudflare Worker proxy used for redirect and raw-fetch operations.
 
 ## Architecture
 
 ### Primary Block: `health-checker`
 
 `blocks/health-checker/health-checker.js` is the entire app entry point. It:
-- Renders the app header (logo, URL input form, API key input, dark/light mode toggle)
-- Orchestrates all 19 checks in parallel via `Promise.all`
+- Renders the app header (logo, URL input form, API key input, **Crawl Sitemap** button, dark/light mode toggle)
+- Orchestrates all 19 checks in parallel via `Promise.all` (single-URL mode)
+- Runs sitemap crawl mode: fetches sitemap URLs, processes pages in batches of 3, renders aggregate crawl report
+- Exposes `runAllChecks(url, apiKey)` — runs all 19 checks for a given URL, returns `Promise<CheckResult[]>`
 - Persists URL history and PSI API key to `localStorage`
 - Auto-runs if the page is opened with a `?url=` query param
 - Saves run history per URL and renders sparklines for trend data
@@ -55,23 +57,27 @@ Only `performance.js` receives a second argument (the PSI API key).
 ### Reporting (`scripts/report/`)
 
 - `dashboard.js` — renders result cards, progress, summary, sparklines; exports `renderCard`, `renderSummary`, `renderSparklines`, `renderLoading`, `renderError`, `updateProgress`, `setContainer`
+- `crawl-report.js` — renders sitemap crawl results; exports `setCrawlContainer`, `renderCrawlLoading`, `updateCrawlProgress`, `renderCrawlReport`
 - `pdf.js` — PDF export
 - `seo-summary.js` — SEO-focused summary view
 
 ### Utilities (`scripts/lib/`)
 
 - `history.js` — `getHistory(url)` / `saveRun(url, results)` — localStorage run history per URL
-- `fetch.js` — shared fetch helper
+- `fetch.js` — shared fetch helper (`fetchAndParse`, `fetchRaw`, `truncate`, `addCapped`)
+- `crawl.js` — `getSitemapUrls(url)` — fetches `{origin}/sitemap.xml`, handles `<urlset>` and `<sitemapindex>` (one level of children), caps at 30 URLs
 
 ### External Dependency
 
-Redirect check uses a Cloudflare Worker proxy: `https://eds-hc-proxy.michelle-seixas.workers.dev/redirect-check?url=<encoded>`
+All proxy-routed fetches go through `https://eds-hc-proxy.michelle-seixas.workers.dev/proxy?url=<encoded>` (CORS bypass). The redirect check uses a separate endpoint on the same worker: `/redirect-check?url=<encoded>`.
 
 ## Known Quirks
 
 - **`redirect.js` self-check**: When the checker itself is running on `*.aem.page`, checking an `aem.page` URL returns `warn` instead of `fail` (so preview testing doesn't tank the score).
 - **Logo theming**: `logo.svg` (light) / `logo-dark.svg` (dark) — swapped via a `MutationObserver` on `document.documentElement[data-theme]`. `logo-dark.svg` is currently untracked in git.
 - **localStorage keys**: `eds-hc-psi-api-key`, `eds-hc-url-history`, `eds-hc-theme`
+- **Crawl PSI quota**: Crawl mode passes the PSI API key through to performance checks on every page. 30 pages = 30 PSI calls — users should be aware of quota consumption.
+- **Crawl URL cap**: `getSitemapUrls` hard-caps at 30 URLs (`MAX_CRAWL_URLS` constant in `scripts/lib/crawl.js`).
 
 ## Adding a New Check
 
