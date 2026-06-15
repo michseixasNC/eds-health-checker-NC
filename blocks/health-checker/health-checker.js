@@ -15,6 +15,7 @@ import { run as runRedirect } from '../../scripts/checks/redirect.js';
 import { run as runScriptLoading } from '../../scripts/checks/script-loading.js';
 import { run as runSitemap } from '../../scripts/checks/sitemap.js';
 import { run as runStructuredData } from '../../scripts/checks/structured-data.js';
+import { run as runSkipNavigation } from '../../scripts/checks/skip-navigation.js';
 import { run as runViewport } from '../../scripts/checks/viewport.js';
 import { run as runWebMcp } from '../../scripts/checks/webmcp.js';
 import { getSitemapUrls } from '../../scripts/lib/crawl.js';
@@ -46,6 +47,7 @@ const CHECKS = [
   { id: 'fonts', label: 'Font Loading', run: runFonts },
   { id: 'inline-styles', label: 'Inline Styles', run: runInlineStyles },
   { id: 'accessibility', label: 'Accessibility', run: runAccessibility },
+  { id: 'skip-navigation', label: 'Skip Navigation', run: runSkipNavigation },
   { id: 'lazy-loading', label: 'Lazy Loading', run: runLazyLoading },
   { id: 'script-loading', label: 'Script Loading', run: runScriptLoading },
   { id: 'duplicate-ids', label: 'Duplicate IDs', run: runDuplicateIds },

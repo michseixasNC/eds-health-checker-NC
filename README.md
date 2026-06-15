@@ -2,9 +2,27 @@
 
 A single-page AEM Edge Delivery Services tool that audits any EDS site URL and reports a dashboard of health check results. Runs fully client-side — no build step, no server — except for a Cloudflare Worker proxy used to bypass CORS for fetch operations.
 
+## Live tool
+
+**https://main--eds-health-checker-nc--michseixasnc.aem.page/**
+
+## How to use
+
+1. Paste any AEM EDS page URL into the input field (e.g. `https://www.yoursite.aem.live/page`)
+2. Click **Run Checks** — 20 checks run in parallel and results appear as a dashboard with pass / warn / fail per check, plus findings and recommendations
+
+**PageSpeed API key** *(optional)* — only needed for the Performance check, which calls the Google PageSpeed Insights API. Without a key the check still runs but may be rate-limited. Paste your key into the "PageSpeed API key" field; it is saved in your browser for future runs. [Get a free key](https://developers.google.com/speed/docs/insights/v5/get-started).
+
+**Crawl Sitemap** — click instead of Run Checks to automatically audit up to 30 pages from the site's `sitemap.xml`. Results show an aggregate report across all pages. If a PSI API key is entered, this will use 1 PSI call per page (up to 30).
+
+**Tips**
+- URL history is saved in your browser — use the dropdown to re-run past checks
+- Deep-link with a pre-filled URL: `?url=https://www.yoursite.aem.live`
+- Toggle dark / light mode with the button in the top right
+
 ## Features
 
-- **19 automated checks** covering performance, metadata, accessibility, SEO, fonts, images, redirects, structured data, AI-readiness, and more
+- **20 automated checks** covering performance, metadata, accessibility, SEO, fonts, images, redirects, structured data, AI-readiness, and more
 - **Sitemap crawl mode** — fetch `sitemap.xml`, run all checks across up to 30 pages, and view a per-check breakdown table showing pass/warn/fail counts and which pages are failing each check
 - **Run history & sparklines** — previous results per URL are stored in `localStorage` and visualised as trend sparklines on each check card
 - **PSI integration** — optional PageSpeed Insights API key for the Performance check
@@ -12,10 +30,30 @@ A single-page AEM Edge Delivery Services tool that audits any EDS site URL and r
 - **PDF export** and **copy link** for sharing results
 - **SEO & AI readiness summary panel** with category-based filtering
 
-## Environments
+## Checks
 
-- Preview: `https://main--eds-health-checker-NC--netcentric.aem.page/`
-- Live: `https://main--eds-health-checker-NC--netcentric.aem.live/`
+| ID | Label |
+|----|-------|
+| performance | Performance (PSI) |
+| metadata | Metadata |
+| blocks | Block Structure |
+| images | Image Routing |
+| redirect | Redirect Check |
+| headings | Heading Hierarchy |
+| links | Link Health |
+| fonts | Font Loading |
+| inline-styles | Inline Styles |
+| accessibility | Accessibility |
+| skip-navigation | Skip Navigation |
+| lazy-loading | Lazy Loading |
+| script-loading | Script Loading |
+| duplicate-ids | Duplicate IDs |
+| structured-data | Structured Data |
+| ai-readiness | AI Readiness |
+| sitemap | Sitemap |
+| viewport | Viewport Meta |
+| lang | Language Attribute |
+| webmcp | WebMCP |
 
 ## Local development
 
@@ -40,7 +78,7 @@ blocks/health-checker/
   health-checker.js   # app entry point — form, orchestration, crawl mode
   health-checker.css  # all app styles
 
-scripts/checks/       # 19 checks, each exports run(url) → CheckResult
+scripts/checks/       # 20 checks, each exports run(url) → CheckResult
 scripts/report/
   dashboard.js        # single-URL results rendering
   crawl-report.js     # sitemap crawl results rendering

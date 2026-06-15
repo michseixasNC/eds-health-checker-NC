@@ -12,9 +12,9 @@ EDS Health Checker by Cognizant Netcentric — a single-page AEM EDS tool that a
 
 `blocks/health-checker/health-checker.js` is the entire app entry point. It:
 - Renders the app header (logo, URL input form, API key input, **Crawl Sitemap** button, dark/light mode toggle)
-- Orchestrates all 19 checks in parallel via `Promise.all` (single-URL mode)
+- Orchestrates all 20 checks in parallel via `Promise.all` (single-URL mode)
 - Runs sitemap crawl mode: fetches sitemap URLs, processes pages in batches of 3, renders aggregate crawl report
-- Exposes `runAllChecks(url, apiKey)` — runs all 19 checks for a given URL, returns `Promise<CheckResult[]>`
+- Exposes `runAllChecks(url, apiKey)` — runs all 20 checks for a given URL, returns `Promise<CheckResult[]>`
 - Persists URL history and PSI API key to `localStorage`
 - Auto-runs if the page is opened with a `?url=` query param
 - Saves run history per URL and renders sparklines for trend data
@@ -28,7 +28,7 @@ Each check file exports `run(url)` → `Promise<CheckResult>`.
 { id: string, label: string, status: 'pass'|'warn'|'fail', findings: string[], checks: string[] }
 ```
 
-Current checks (19 total):
+Current checks (20 total):
 
 | ID | Label | File |
 |----|-------|------|
@@ -42,6 +42,7 @@ Current checks (19 total):
 | fonts | Font Loading | fonts.js |
 | inline-styles | Inline Styles | inline-styles.js |
 | accessibility | Accessibility | accessibility.js |
+| skip-navigation | Skip Navigation | skip-navigation.js — WCAG 2.4.1 Level A skip link |
 | lazy-loading | Lazy Loading | lazy-loading.js |
 | script-loading | Script Loading | script-loading.js |
 | duplicate-ids | Duplicate IDs | duplicate-ids.js |
